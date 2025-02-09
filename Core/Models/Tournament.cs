@@ -1,4 +1,4 @@
-namespace Api.Models;
+namespace Core.Models;
 
 public class Tournament(string name, int numberOfRounds, List<Player> players)
 {
