@@ -1,13 +1,18 @@
 using Frontend.Components;
+using Frontend.Setup;
 using Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Configuration.AddJsonFile("connectionstrings.json");
 
 // Add services to the container.
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
 builder.Services.AddInfrastructure(builder.Configuration);
+
+builder.Services.AddAuth();
 
 var app = builder.Build();
 
@@ -22,16 +27,21 @@ else
 {
     app.UseDeveloperExceptionPage();
     app.UseMigrationsEndPoint();
+    app.ApplyMigrations();
 }
 
-using (var scope = app.Services.CreateScope())
-{
-    var services = scope.ServiceProvider;
+// using (var scope = app.Services.CreateScope())
+// {
+//     var services = scope.ServiceProvider;
+//
+//     var context = services.GetRequiredService<AppDbContext>();
+//     context.Database.EnsureDeleted();
+//     context.Database.EnsureCreated();
+//     // DbInitializer.Initialize(context);
+// }
 
-    var context = services.GetRequiredService<AppDbContext>();
-    context.Database.EnsureCreated();
-    // DbInitializer.Initialize(context);
-}
+app.UseAuthentication();
+app.UseAuthorization();
 
 app.UseHttpsRedirection();
 

@@ -1,5 +1,5 @@
 {
   "ConnectionStrings": {
-    "Database": "postgresql://rufus_k:@localhost:5432/bandhand?schema=bandhand"
+    "Database": "Host=localhost;Port=5432;Database=bandhand;Username=rufus_k;Password=bandhand"
   }
 }
