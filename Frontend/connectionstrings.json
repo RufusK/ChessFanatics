@@ -1,0 +1,5 @@
+{
+  "ConnectionStrings": {
+    "Database": "postgresql://rufus_k:@localhost:5432/bandhand?schema=bandhand"
+  }
+}

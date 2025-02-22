@@ -4,18 +4,15 @@
         <TargetFramework>net9.0</TargetFramework>
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
-        <UserSecretsId>aspnet-Frontend-6c6dd8ae-b558-4460-aa8a-efbbe5b13a10</UserSecretsId>
+        <RootNamespace>Frontend</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>
-        <None Update="Data\app.db" CopyToOutputDirectory="PreserveNewest" ExcludeFromSingleFile="true"/>
+      <ProjectReference Include="..\Infrastructure\Infrastructure.csproj" />
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="9.0.0"/>
-        <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="9.0.0"/>
-        <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="9.0.0"/>
-        <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="9.0.0"/>
+      <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="9.0.2" />
     </ItemGroup>
 
 </Project>
