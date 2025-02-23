@@ -30,16 +30,6 @@ else
     app.ApplyMigrations();
 }
 
-// using (var scope = app.Services.CreateScope())
-// {
-//     var services = scope.ServiceProvider;
-//
-//     var context = services.GetRequiredService<AppDbContext>();
-//     context.Database.EnsureDeleted();
-//     context.Database.EnsureCreated();
-//     // DbInitializer.Initialize(context);
-// }
-
 app.UseAuthentication();
 app.UseAuthorization();
 
