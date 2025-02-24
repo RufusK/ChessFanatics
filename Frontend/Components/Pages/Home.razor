@@ -1,14 +1,3 @@
 ﻿@page "/"
-@rendermode InteractiveServer
 
 <PageTitle>Home</PageTitle>
-
-<button @onclick="NavigateToLogin">Login</button>
-
-@code {
-
-    private void NavigateToLogin()
-    {
-        NavigationManager.NavigateTo("auth/login");
-    }
-}

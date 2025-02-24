@@ -1,5 +1,7 @@
 {
   "ConnectionStrings": {
-    "Database": "Host=localhost;Port=5432;Database=bandhand;Username=rufus_k;Password=bandhand"
+    "Database": "Host=localhost;Port=5432;Database=bandhand;Username=rufus_k;Password=bandhand",
+    "DefaultUserEmail": "jimzitrone@gmail.com",
+    "DefaultUserPassword": "Beatles04@"
   }
 }

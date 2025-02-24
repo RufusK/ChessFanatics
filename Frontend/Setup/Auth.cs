@@ -24,6 +24,7 @@ public static class Auth
                 opt.Password.RequireLowercase = true;
             })
             .AddEntityFrameworkStores<AppDbContext>()
+            .AddSignInManager()
             .AddApiEndpoints();
     }
 }

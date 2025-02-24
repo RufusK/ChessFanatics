@@ -1,6 +1,7 @@
 using Frontend.Components;
 using Frontend.Setup;
 using Infrastructure;
+using MudBlazor.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -9,6 +10,8 @@ builder.Configuration.AddJsonFile("connectionstrings.json");
 // Add services to the container.
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
+
+builder.Services.AddMudServices();
 
 builder.Services.AddInfrastructure(builder.Configuration);
 
@@ -40,5 +43,7 @@ app.UseAntiforgery();
 app.MapStaticAssets();
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode();
+
+await app.EnsureDefaultUserExists();
 
 app.Run();

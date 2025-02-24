@@ -1,9 +1,35 @@
 ﻿@inherits LayoutComponentBase
 
-@Body
+<MudThemeProvider/>
+<MudPopoverProvider/>
 
-<div id="blazor-error-ui" data-nosnippet>
-    An unhandled error has occurred.
-    <a href="." class="reload">Reload</a>
-    <span class="dismiss">🗙</span>
-</div>
+<MudDialogProvider/>
+
+<MudSnackbarProvider/>
+
+<MudLayout>
+    <MudAppBar Elevation="0">
+        <MudText Typo="Typo.h5" Class="ml-3">Chess Fanatics</MudText>
+        <MudSpacer/>
+        <AuthorizeView>
+            <Authorized>
+                Logged In
+            </Authorized>
+            <NotAuthorized>
+                <MudIconButton @onclick="NavigateToLogin" Icon="@Icons.Material.Filled.Login" Color="Color.Inherit"
+                               Edge="Edge.End"/>
+            </NotAuthorized>
+        </AuthorizeView>
+    </MudAppBar>
+    <MudMainContent>
+        <MudContainer MaxWidth="MaxWidth.Medium">
+            @Body
+        </MudContainer>
+    </MudMainContent>
+</MudLayout>
+
+@code {
+
+    private void NavigateToLogin() => NavigationManager.NavigateTo("auth/login");
+
+}
