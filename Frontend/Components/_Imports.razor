@@ -9,8 +9,15 @@
 @using Microsoft.JSInterop
 @using Frontend
 @using Frontend.Components
+@using Frontend.Services
+@using Infrastructure
 @using Microsoft.AspNetCore.Identity
 @using MudBlazor
+@using MudBlazor.StaticInput
 @using Microsoft.AspNetCore.Components.Authorization
 @inject NavigationManager NavigationManager
 @inject SignInManager<User> SignInManager
+@inject IDialogService DialogService
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject AppDbContext DbContext
+@inject UserService UserService

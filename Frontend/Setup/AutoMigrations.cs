@@ -9,8 +9,5 @@ public static class AutoMigrations
         using var serviceScope = app.ApplicationServices.CreateScope();
         
         using var dbContext = serviceScope.ServiceProvider.GetRequiredService<AppDbContext>();
-
-        dbContext.Database.EnsureDeleted();
-        dbContext.Database.EnsureCreated();
     }
 }

@@ -13,7 +13,9 @@
         <MudSpacer/>
         <AuthorizeView>
             <Authorized>
-                Logged In
+                <MudButton @onclick="NavigateToAdmin" Color="Color.Inherit"
+                           Edge="Edge.End">Manage
+                </MudButton>
             </Authorized>
             <NotAuthorized>
                 <MudIconButton @onclick="NavigateToLogin" Icon="@Icons.Material.Filled.Login" Color="Color.Inherit"
@@ -22,7 +24,7 @@
         </AuthorizeView>
     </MudAppBar>
     <MudMainContent>
-        <MudContainer MaxWidth="MaxWidth.Medium">
+        <MudContainer MaxWidth="MaxWidth.Medium" Class="mt-4">
             @Body
         </MudContainer>
     </MudMainContent>
@@ -30,6 +32,7 @@
 
 @code {
 
-    private void NavigateToLogin() => NavigationManager.NavigateTo("auth/login");
+    private void NavigateToLogin() => NavigationManager.NavigateTo("auth/login", true);
+    private void NavigateToAdmin() => NavigationManager.NavigateTo("manage/leagues");
 
 }

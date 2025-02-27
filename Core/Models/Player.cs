@@ -1,13 +1,14 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace Core.Models;
 
-public class Player(string name, string email)
+public class Player(string firstName, string lastName, string email) : BaseEntity
 {
-    public Guid Id { get; init; } = Guid.NewGuid();
+    [Required] public string FirstName { get; set; } = firstName;
 
-    public string Name { get; } = name;
+    [Required] public string LastName { get; set; } = lastName;
 
-    public string Email { get; set; } = email;
-    
-    public override bool Equals(object? obj) => obj is Player other && Name == other.Name;
-    public override int GetHashCode() => Name.GetHashCode(); // Ensures correct dictionary behavior
+    [Required] public string Email { get; set; } = email;
+
+    public ICollection<LeagueParticipation> LeagueParticipations { get; } = new List<LeagueParticipation>();
 }

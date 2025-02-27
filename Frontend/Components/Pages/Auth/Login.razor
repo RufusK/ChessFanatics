@@ -1,44 +1,57 @@
 @page "/auth/login"
+@attribute [ExcludeFromInteractiveRouting]
 @using System.ComponentModel.DataAnnotations
-@using Microsoft.AspNetCore.Authentication
 @inject NavigationManager NavigationManager
 @inject ISnackbar Snackbar
 
-<PageTitle>Login</PageTitle>
+<PageTitle>Log in</PageTitle>
 
-<MudPaper Class="pa-6" Elevation="6" Style="max-width: 400px; margin: auto; margin-top: 100px;">
-    <MudText Typo="Typo.h5" Align="Align.Center" GutterBottom="true">Login</MudText>
-    <EditForm FormName="Login" Model="loginModel" OnValidSubmit="HandleValidSubmit">
-        <DataAnnotationsValidator />
-        <MudTextField @bind-Value="loginModel.Email" Label="Email" For="@(() => loginModel.Email)" Required="true" Margin="Margin.Normal" />
-        <MudTextField @bind-Value="loginModel.Password" Label="Password" For="@(() => loginModel.Password)" InputType="InputType.Password" Required="true" Margin="Margin.Normal" />
-        <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" FullWidth="true" Class="mt-4">
-            Login
-        </MudButton>
-    </EditForm>
-</MudPaper>
+<MudText Typo="Typo.h3" GutterBottom="true">Log in</MudText>
+
+<MudGrid>
+    <MudItem md="6">
+        <StatusMessage Message="@errorMessage"/>
+        <EditForm Model="Model" method="post" OnValidSubmit="LoginUser" FormName="login">
+            <DataAnnotationsValidator/>
+
+            <MudText GutterBottom="true" Typo="Typo.body1">Use a local account to log in.</MudText>
+
+            <MudGrid>
+                <MudItem md="12">
+                    <MudStaticTextField For="@(() => Model.Email)" @bind-Value="Model.Email"
+                                        Label="Email" Placeholder="name@example.com"
+                                        UserAttributes="@(new() { { "autocomplete", "username" }, { "aria-required", "true" } })"/>
+                </MudItem>
+                <MudItem md="12">
+                    <MudStaticTextField For="@(() => Model.Password)" @bind-Value="Model.Password"
+                                        Label="Password" InputType="InputType.Password" Placeholder="password"
+                                        UserAttributes="@(new() { { "autocomplete", "current-password" }, { "aria-required", "true" } })"/>
+                </MudItem>
+                <MudItem md="12">
+                    <MudStaticButton Variant="Variant.Filled" Color="Color.Primary" FullWidth="true" FormAction="FormAction.Submit">Log in</MudStaticButton>
+                </MudItem>
+            </MudGrid>
+        </EditForm>
+
+    </MudItem>
+</MudGrid>
 
 @code {
-    [CascadingParameter] private HttpContext HttpContext { get; set; } = default!;
-    
-    private LoginModel loginModel = new();
-    
-    // protected override async Task OnInitializedAsync()
-    // {
-    //     if (HttpMethods.IsGet(HttpContext.Request.Method))
-    //     {
-    //         // Clear the existing external cookie to ensure a clean login process
-    //         await HttpContext.SignOutAsync(IdentityConstants.ApplicationScheme);
-    //     }
-    // }
+    private string? errorMessage;
 
-    private async Task HandleValidSubmit()
+    [CascadingParameter] private HttpContext HttpContext { get; set; } = null!;
+
+    [SupplyParameterFromForm] LoginModel Model { get; set; } = new();
+
+    private async Task LoginUser()
     {
-        // Replace this with your actual authentication logic, for example:
-        var result = await SignInManager.PasswordSignInAsync(loginModel.Email, loginModel.Password, true, false);
-        if (result.Succeeded) {
-            NavigationManager.NavigateTo("/", true);
-        } else {
+        var result = await SignInManager.PasswordSignInAsync(Model.Email, Model.Password, true, false);
+        if (result.Succeeded)
+        {
+            NavigationManager.NavigateTo("/");
+        }
+        else
+        {
             Snackbar.Add("Invalid login attempt", Severity.Error);
         }
     }
@@ -47,9 +60,10 @@
     {
         [Required(ErrorMessage = "Email is required")]
         [EmailAddress(ErrorMessage = "Invalid email address")]
-        public string Email { get; set; }
+        public string Email { get; set; } = "jimzitrone@gmail.com";
 
         [Required(ErrorMessage = "Password is required")]
-        public string Password { get; set; }
+        public string Password { get; set; } = "Beatles04@";
     }
+
 }

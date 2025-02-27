@@ -13,11 +13,11 @@ public class SwissSystemTests
         // Adjusting Player creation to include both Name and Email
         _players =
         [
-            new Player("Alice", "alice@example.com"),
-            new Player("Bob", "bob@example.com"),
-            new Player("Charlie", "charlie@example.com"),
-            new Player("David", "david@example.com"),
-            new Player("Eve", "eve@example.com")
+            new Player("Alice", "Mayer", "alice@example.com"),
+            new Player("Bob", "Mayer", "bob@example.com"),
+            new Player("Charlie", "Mayer", "charlie@example.com"),
+            new Player("David", "Mayer", "david@example.com"),
+            new Player("Eve", "Maier", "eve@example.com")
         ];
     }
 

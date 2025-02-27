@@ -12,8 +12,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{C8B95123-EA1
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Infrastructure", "Infrastructure\Infrastructure.csproj", "{AD7F3FF7-92D9-4955-A4B4-74B497DDA75D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MudBlazorWebApp1", "MudBlazorWebApp1\MudBlazorWebApp1.csproj", "{B0D69164-B469-4B3B-A6BB-AE596A3A6F4B}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -36,10 +34,6 @@ Global
 		{AD7F3FF7-92D9-4955-A4B4-74B497DDA75D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AD7F3FF7-92D9-4955-A4B4-74B497DDA75D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AD7F3FF7-92D9-4955-A4B4-74B497DDA75D}.Release|Any CPU.Build.0 = Release|Any CPU
-		{B0D69164-B469-4B3B-A6BB-AE596A3A6F4B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{B0D69164-B469-4B3B-A6BB-AE596A3A6F4B}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{B0D69164-B469-4B3B-A6BB-AE596A3A6F4B}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{B0D69164-B469-4B3B-A6BB-AE596A3A6F4B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{B802BF77-DBD7-4B20-A912-8531D374F44D} = {FD618A48-36EE-4CE9-8799-024535901C3A}

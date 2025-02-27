@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using Core.Models;
 using Infrastructure;
 using Microsoft.AspNetCore.Identity;
@@ -9,8 +10,7 @@ public static class Auth
     public static void AddAuth(this IServiceCollection services)
     {
         services.AddAuthentication(IdentityConstants.ApplicationScheme)
-            .AddCookie(IdentityConstants.ApplicationScheme)
-            .AddBearerToken(IdentityConstants.BearerScheme);
+            .AddIdentityCookies();
 
         services.AddAuthorization();
 
@@ -22,6 +22,7 @@ public static class Auth
                 opt.Password.RequireNonAlphanumeric = true;
                 opt.Password.RequireUppercase = true;
                 opt.Password.RequireLowercase = true;
+                opt.ClaimsIdentity.UserIdClaimType = ClaimTypes.PrimarySid;
             })
             .AddEntityFrameworkStores<AppDbContext>()
             .AddSignInManager()

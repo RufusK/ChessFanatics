@@ -1,4 +1,5 @@
 using Frontend.Components;
+using Frontend.Services;
 using Frontend.Setup;
 using Infrastructure;
 using MudBlazor.Services;
@@ -11,11 +12,15 @@ builder.Configuration.AddJsonFile("connectionstrings.json");
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
+builder.Services.AddCascadingAuthenticationState();
+
 builder.Services.AddMudServices();
 
 builder.Services.AddInfrastructure(builder.Configuration);
 
 builder.Services.AddAuth();
+
+builder.Services.AddTransient<UserService>();
 
 var app = builder.Build();
 
