@@ -8,6 +8,6 @@ public class LeagueOrganizer : BaseEntity
 
     public bool IsOwner { get; set; } = false;
 
-    public Guid LeagueId { get; set; }
+    public int LeagueId { get; set; }
     public League League { get; set; } = null!;
 }

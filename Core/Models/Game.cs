@@ -1,6 +1,6 @@
 namespace Core.Models;
 
-public class Game
+public class Game: BaseEntity
 {
     public Game(Player white, Player? black = null)
     {
@@ -11,12 +11,7 @@ public class Game
             Result = GameResult.Bye;
         }
     }
-
-    public Guid Id { get; init; } = Guid.NewGuid();
-
     public Player White { get; init; }
-
     public Player? Black { get; init; }
-
     public GameResult? Result { get; set; }
 }

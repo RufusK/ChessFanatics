@@ -10,5 +10,5 @@ public class Player(string firstName, string lastName, string email) : BaseEntit
 
     [Required] public string Email { get; set; } = email;
 
-    public ICollection<LeagueParticipation> LeagueParticipations { get; } = new List<LeagueParticipation>();
+    public ICollection<LeagueParticipation> LeagueParticipations { get; } = [];
 }

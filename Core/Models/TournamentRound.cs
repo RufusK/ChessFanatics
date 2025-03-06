@@ -1,8 +1,6 @@
 namespace Core.Models;
 
-public class TournamentRound(IEnumerable<Game> games)
+public class TournamentRound: BaseEntity
 {
-    public Guid Id { get; init; } = Guid.NewGuid();
-
-    public List<Game> Games { get; init; } = games.ToList();
+    public ICollection<Game> Games { get; set; } = [];
 }

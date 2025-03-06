@@ -1,18 +1,16 @@
 namespace Core.Models;
 
-public class Tournament(string name, int numberOfRounds, List<Player> players)
+public class Tournament: BaseEntity
 {
-    public Guid Id { get; init; } = Guid.NewGuid();
+    public required string Name { get; set; }
 
-    public string Name { get; set; } = name;
-
-    public int NumberOfRounds { get; init; } = numberOfRounds;
+    public required int NumberOfRounds { get; set; }
 
     public int CurrentRound { get; private set; } = 0;
 
-    public List<TournamentRound> Rounds { get; init; } = [];
+    public ICollection<TournamentRound> Rounds { get; init; } = [];
 
-    public List<Player> Players { get; init; } = players;
+    public ICollection<Player> Players { get; init; } = [];
 
     public void AddPlayer(Player player)
     {
@@ -38,7 +36,10 @@ public class Tournament(string name, int numberOfRounds, List<Player> players)
     {
         var shuffledPlayers = Players.OrderBy(_ => rng.Next());
         var games = PlayersToGames(shuffledPlayers);
-        Rounds.Add(new TournamentRound(games));
+        Rounds.Add(new TournamentRound
+        {
+            Games = games.ToList()
+        });
     }
 
     private static IEnumerable<Game> PlayersToGames(IOrderedEnumerable<Player> players)

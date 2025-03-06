@@ -21,6 +21,7 @@ builder.Services.AddInfrastructure(builder.Configuration);
 builder.Services.AddAuth();
 
 builder.Services.AddTransient<UserService>();
+builder.Services.AddTransient<LeagueService>();
 
 var app = builder.Build();
 

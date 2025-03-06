@@ -6,7 +6,7 @@
     <MudList T="League" Class="mt-4">
         @foreach (var l in LeaguesList)
         {
-            <MudListItem Text="@l.Name" @onclick="() => NavigateToLeague(l.Id)" />
+            <MudListItem Text="@l.Name" @onclick="() => NavigateToLeague(l.Id.ToString())" />
         }
     </MudList>
 }
@@ -26,6 +26,6 @@
         LeaguesList = DbContext.Leagues.ToListAsync().Result;
     }
 
-    private void NavigateToLeague(Guid id) => NavigationManager.NavigateTo("Manage/Leagues/" + id);
+    private void NavigateToLeague(string id) => NavigationManager.NavigateTo("Manage/Leagues/" + id);
 
 }

@@ -1,8 +1,11 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace Core.Models;
 
 public class BaseEntity
 {
-    public Guid Id { get; set; } = Guid.NewGuid();
+    [Key]
+    public int Id { get; set; }
 
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 

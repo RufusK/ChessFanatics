@@ -5,6 +5,6 @@ namespace Core.Models;
 public class Season : BaseEntity
 {
     [Required] public required string Name { get; set; }
-    public Guid LeagueId { get; set; }
-    public League League { get; set; } = null!;
+    public int LeagueId { get; init; }
+    public League League { get; init; } = null!;
 }
