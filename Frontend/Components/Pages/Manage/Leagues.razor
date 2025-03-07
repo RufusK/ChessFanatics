@@ -1,31 +1,23 @@
 @page "/Manage/Leagues"
 @using Microsoft.EntityFrameworkCore
-<MudButton OnClick="OpenCreateLeagueDialogAsync" Variant="Variant.Filled" Color="Color.Primary">New League</MudButton>
+<MudButton OnClick='() => NavigationManager.NavigateTo("Manage/Leagues/New")' Variant="Variant.Filled"
+           Color="Color.Primary">New League
+</MudButton>
 @if (LeaguesList is not null)
 {
     <MudList T="League" Class="mt-4">
         @foreach (var l in LeaguesList)
         {
-            <MudListItem Text="@l.Name" @onclick="() => NavigateToLeague(l.Id.ToString())" />
+            <MudListItem Text="@l.Name" @onclick='() => NavigationManager.NavigateTo("Manage/Leagues/" + l.Id)'/>
         }
     </MudList>
 }
 
 @code {
-
-    private async Task OpenCreateLeagueDialogAsync()
-    {
-        await (await DialogService.ShowAsync<CreateLeagueDialog>()).Result;
-        OnInitialized();
-    }
-
     private ICollection<League>? LeaguesList { get; set; }
 
     protected override void OnInitialized()
     {
         LeaguesList = DbContext.Leagues.ToListAsync().Result;
     }
-
-    private void NavigateToLeague(string id) => NavigationManager.NavigateTo("Manage/Leagues/" + id);
-
 }

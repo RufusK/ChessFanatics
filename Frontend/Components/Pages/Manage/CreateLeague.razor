@@ -1,0 +1,49 @@
+@page "/Manage/Leagues/New"
+@using System.ComponentModel.DataAnnotations
+
+<EditForm Model="@_model" OnValidSubmit="OnSubmit">
+    <MudCard Elevation="1" Class="p-4">
+        <MudCardHeader>
+            <MudText Typo="Typo.h4">
+                Create New League
+            </MudText>
+        </MudCardHeader>
+        <MudCardContent>
+            <MudTextField @bind-Value="_model.Name" For="@(() => _model.Name)" AutoFocus Placeholder="League Name"/>
+        </MudCardContent>
+        <MudCardActions>
+            <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary">Create</MudButton>
+        </MudCardActions>
+    </MudCard>
+</EditForm>
+
+@code {
+    private Model _model = new();
+
+    private async Task OnSubmit(EditContext context)
+    {
+        var user = await UserService.GetUser();
+        var league = new League
+        {
+            Name = _model.Name,
+            Organizers =
+            {
+                new LeagueOrganizer
+                {
+                    IsOwner = true,
+                    UserId = user.Id
+                }
+            }
+        };
+
+        var leagueEntity = await DbContext.Leagues.AddAsync(league);
+        await DbContext.SaveChangesAsync();
+        NavigationManager.NavigateTo("Manage/Leagues/" + leagueEntity.Entity.Id);
+    }
+
+    public class Model
+    {
+        [Required] public string Name { get; set; }
+    }
+
+}
