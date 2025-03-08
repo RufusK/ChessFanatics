@@ -3,18 +3,18 @@
     Tournament
 </HxButton>
 <HxListGroup CssClass="mt-4">
-    @foreach (var s in tournaments)
+    @foreach (var t in tournaments)
     {
-        <HxListGroupItem @onclick='() => NavigationManager.NavigateTo("Manage/Leagues/" + s.Id)'>
+        <HxListGroupItem @onclick='() => NavigationManager.NavigateTo("Manage/Tournaments/" + t.Id)'>
             <div>
                 <b>
-                    @s.Name
+                    @t.Name
                 </b>
             </div>
-            @if (s.Season != null)
+            @if (t.Season != null)
             {
                 <small>
-                    Season: @s.Season.Name
+                    Season: @t.Season.Name
                 </small>
             }
         </HxListGroupItem>

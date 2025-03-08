@@ -1,0 +1,82 @@
+@page "/Manage/Tournaments/{id}/AddPlayer"
+@using System.ComponentModel.DataAnnotations
+
+<EditForm Model="@model" OnValidSubmit="Submit">
+    <DataAnnotationsValidator/>
+    <h3>Add Player</h3>
+    <HxInputText @bind-Value="@model.FirstName" CssClass="mb-2" Placeholder="First Name" AutoFocus/>
+    <HxInputText @bind-Value="@model.LastName" CssClass="mb-2" Placeholder="Last Name"/>
+    <HxInputText @bind-Value="@model.Email" CssClass="mb-2" Placeholder="Email" InputMode="InputMode.Email"/>
+    <div>
+        <HxSubmit Color="ThemeColor.Primary" CssClass="mr-4">Add Player</HxSubmit>
+        <HxButton Color="ThemeColor.Light" @onclick='() => NavigationManager.NavigateTo("/Manage/Tournaments/" + Id)'>Back</HxButton>
+    </div>
+</EditForm>
+
+@code {
+    [Parameter] public required string Id { get; set; }
+
+    private Model model = new();
+
+    private async Task Submit()
+    {
+        await using var dbContext = await DbContextFactory.CreateDbContextAsync();
+
+        // check if player with email exists
+        var tournament = await dbContext.Tournaments.FindAsync(int.Parse(Id));
+
+        var existingPlayer = await dbContext.Players
+            .Include(x => x.TournamentParticipations)
+            .FirstOrDefaultAsync(x => x.Email == model.Email && x.LeagueParticipations
+                .Any(l => l.LeagueId == tournament!.LeagueId));
+
+        if (existingPlayer is null)
+        {
+            dbContext.Players.Add(new Player
+            {
+                FirstName = model.FirstName,
+                LastName = model.LastName,
+                Email = model.Email,
+                LeagueParticipations =
+                {
+                    new LeagueParticipation
+                    {
+                        LeagueId = tournament!.LeagueId
+                    }
+                },
+                TournamentParticipations =
+                {
+                    new TournamentParticipation
+                    {
+                        TournamentId = tournament.Id
+                    }
+                }
+            });
+        }
+        else
+        {
+            var isAlreadyInTournament = existingPlayer.TournamentParticipations.Any(x => x.TournamentId == tournament!.Id);
+            if (isAlreadyInTournament) return;
+
+            existingPlayer.TournamentParticipations.Add(new TournamentParticipation
+            {
+                TournamentId = tournament!.Id
+            });
+        }
+
+
+        await dbContext.SaveChangesAsync();
+
+        model = new Model();
+    }
+
+    public class Model
+    {
+        [Required] [MinLength(1)] public string FirstName { get; set; }
+
+        [Required] [MinLength(1)] public string LastName { get; set; }
+
+        [Required] [MinLength(1)] public string Email { get; set; }
+    }
+
+}

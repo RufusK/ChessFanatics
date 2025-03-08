@@ -9,6 +9,7 @@
         </HxTab>
         <HxTab Title="Rounds">
             <Content>
+                <TournamentRounds/>
             </Content>
         </HxTab>
         <HxTab Title="Standings">
@@ -26,7 +27,7 @@
     protected override async Task OnInitializedAsync()
     {
         await using var dbContext = await DbContextFactory.CreateDbContextAsync();
-        Tournament = await dbContext.Tournaments.FirstAsync(x => x.LeagueId == int.Parse(Id));
+        Tournament = await dbContext.Tournaments.FirstAsync(x => x.Id == int.Parse(Id));
     }
 
 }   

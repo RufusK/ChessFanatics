@@ -1,0 +1,11 @@
+.row.no-wrap {
+    display: flex;
+    flex-wrap: nowrap; /* Prevents row breaking */
+}
+.col-fixed {
+    width: 30px;
+    flex: 0 0 30px; /* Prevents resizing */
+}
+.col-flex {
+    flex: 1; /* Takes remaining space */
+}

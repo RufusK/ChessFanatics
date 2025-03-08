@@ -1,0 +1,83 @@
+@page "/Manage/Tournaments/{id}/CreateNextRound"
+<h3 class="mb-4">Create Round @(Tournament?.CurrentRound + 1)</h3>
+
+@foreach (var (game, index) in Games.Select((game, index) => (game, index)))
+{
+    <div class="container mb-2">
+        <div class="row no-wrap">
+            <div class="d-flex align-items-center justify-content-center"
+                 style="width: 30px; flex: 0 0 30px;">@(index + 1)</div>
+            <div class="col-flex">
+                <HxAutosuggest
+                    TItem="TournamentParticipation"
+                    TValue="int?"
+                    @bind-Value="@game.White"
+                    DataProvider="ProvideSuggestions"
+                    ValueSelector="employee => employee.Id"
+                    TextSelector='employee => $"{employee.Player.FirstName} {employee.Player.LastName} ({employee.Player.Email})"'
+                    MinimumLength="0"
+                    ItemFromValueResolver="ResolveAutosuggestItemFromValue"
+                    InputGroupStartText="White"
+                    SearchIcon="null"/>
+            </div>
+            <div class="d-flex align-items-center justify-content-center" style="width: 30px; flex: 0 0 30px;">-:-</div>
+            <div class="col-flex">
+                <HxAutosuggest
+                    TItem="TournamentParticipation"
+                    TValue="int?"
+                    @bind-Value="@game.Black"
+                    DataProvider="ProvideSuggestions"
+                    ValueSelector="employee => employee.Id"
+                    TextSelector='employee => $"{employee.Player.FirstName} {employee.Player.LastName} ({employee.Player.Email})"'
+                    MinimumLength="0"
+                    ItemFromValueResolver="ResolveAutosuggestItemFromValue"
+                    InputGroupEndText="Black"
+                    SearchIcon="null"/>
+            </div>
+        </div>
+    </div>
+}
+<HxButton Color="ThemeColor.Primary" @onclick="() => Games.Add(new UiGame())" CssClass="mt-2">Add Game</HxButton>
+
+@code {
+    [Parameter] public required string Id { get; set; }
+
+    private Tournament? Tournament { get; set; }
+    private ICollection<TournamentParticipation>? Players { get; set; }
+
+    private List<UiGame> Games { get; set; } = [new()];
+
+    protected override async Task OnInitializedAsync()
+    {
+        await using var dbContext = await DbContextFactory.CreateDbContextAsync();
+        Tournament = await dbContext.Tournaments.FirstAsync(x => x.Id == int.Parse(Id));
+        Players = await dbContext.TournamentParticipations
+            .Include(x => x.Player)
+            .Where(x => x.TournamentId == int.Parse(Id))
+            .ToListAsync();
+    }
+
+    private class UiGame
+    {
+        public int? White { get; set; }
+        public int? Black { get; set; }
+    }
+
+    private Task<AutosuggestDataProviderResult<TournamentParticipation>> ProvideSuggestions(AutosuggestDataProviderRequest request)
+    {
+        var match = Players?.Where(x => x.Player.FirstName.Contains(request.UserInput)).ToList();
+
+        return Task.FromResult(new AutosuggestDataProviderResult<TournamentParticipation> { Data = match });
+    }
+
+    private Task<TournamentParticipation?> ResolveAutosuggestItemFromValue(int? value)
+    {
+        if (value is null || Players is null)
+        {
+            return Task.FromResult<TournamentParticipation?>(null);
+        }
+
+        return Task.FromResult(Players.FirstOrDefault(x => x.Id == value));
+    }
+
+}

@@ -14,11 +14,26 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : IdentityDbCo
     public DbSet<Tournament> Tournaments { get; set; }
     public DbSet<TournamentRound> TournamentRounds { get; set; }
     public DbSet<TournamentParticipation> TournamentParticipations { get; set; }
+    public DbSet<Game> Games { get; set; }
+    
+    
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);
 
         builder.HasDefaultSchema("identity");
+        
+        builder.Entity<Game>()
+            .HasOne(g => g.PlayerWhite)
+            .WithMany(p => p.GamesAsWhite)
+            .HasForeignKey(g => g.PlayerWhiteId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.Entity<Game>()
+            .HasOne(g => g.PlayerBlack)
+            .WithMany(p => p.GamesAsBlack)
+            .HasForeignKey(g => g.PlayerBlackId)
+            .OnDelete(DeleteBehavior.Restrict);
     }
 }
