@@ -1,0 +1,36 @@
+<HxButton Color="ThemeColor.Primary" CssClass="mr-4"
+          @onclick='() => NavigationManager.NavigateTo("/Manage/Leagues/" + LeagueId + "/NewTournament")'>Create
+    Tournament
+</HxButton>
+<HxListGroup CssClass="mt-4">
+    @foreach (var s in tournaments)
+    {
+        <HxListGroupItem @onclick='() => NavigationManager.NavigateTo("Manage/Leagues/" + s.Id)'>
+            <div>
+                <b>
+                    @s.Name
+                </b>
+            </div>
+            @if (s.Season != null)
+            {
+                <small>
+                    Season: @s.Season.Name
+                </small>
+            }
+        </HxListGroupItem>
+    }
+</HxListGroup>
+
+@code {
+    private ICollection<Core.Models.Tournament> tournaments { get; set; } = [];
+
+    [CascadingParameter(Name = "LeagueId")]
+    protected string LeagueId { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await using var dbContext = await DbContextFactory.CreateDbContextAsync();
+        tournaments = await dbContext.Tournaments.Include(x => x.Season).Where(x => x.LeagueId == int.Parse(LeagueId)).ToListAsync();
+    }
+
+}

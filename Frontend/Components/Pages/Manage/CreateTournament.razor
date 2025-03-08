@@ -1,0 +1,66 @@
+@page "/Manage/Leagues/{id}/NewTournament"
+@using System.ComponentModel.DataAnnotations
+
+<EditForm Model="@model" OnValidSubmit="Submit">
+    <DataAnnotationsValidator/>
+    <h3>Create New Tournament</h3>
+    <HxInputText @bind-Value="@model.Name" AutoFocus CssClass="mb-2" InputGroupStartText="Name"/>
+    <HxSelect TItem="Season"
+              TValue="int?"
+              Data="seasons"
+              @bind-Value="@model.SeasonId"
+              TextSelector="@(s => s.Name)"
+              ValueSelector="@(s => s.Id)"
+              Nullable="true"
+              NullText="--"
+              NullDataText="Loading seasons..."
+              InputGroupStartText="Season"/>
+    <HxInputNumber @bind-Value="@model.NumberOfRounds" AutoFocus CssClass="mb-2"
+                   InputMode="InputMode.Numeric" InputGroupStartText="Number Of Rounds"/>
+    <HxCheckbox @bind-Value="@model.IsEloRated" Label="Is Elo Rated?"/>
+    <HxSubmit Color="ThemeColor.Primary">Save</HxSubmit>
+</EditForm>
+
+@code {
+    [Parameter] public required string Id { get; set; }
+
+    private Model model = new();
+    
+    protected override async Task OnInitializedAsync()
+    {
+        await using var dbContext = await DbContextFactory.CreateDbContextAsync();
+        seasons = await dbContext.Seasons.Where(x => x.LeagueId == int.Parse(Id)).ToListAsync();
+    }
+
+    private ICollection<Season> seasons { get; set; } = null!;
+
+    private async Task Submit()
+    {
+        var league = await LeagueService.GetLeague(Id);
+
+        await using var dbContext = await DbContextFactory.CreateDbContextAsync();
+        dbContext.Tournaments.Add(new Core.Models.Tournament
+        {
+            Name = model.Name,
+            LeagueId = league.Id,
+            NumberOfRounds = model.NumberOfRounds,
+            IsEloRated = model.IsEloRated,
+            SeasonId = model.SeasonId
+        });
+        await dbContext.SaveChangesAsync();
+
+        NavigationManager.NavigateTo("/Manage/Leagues/" + Id);
+    }
+
+    public class Model
+    {
+        [Required] [MinLength(1)] public string Name { get; set; }
+
+        [Required] public bool IsEloRated { get; set; } = true;
+
+        [Required] public int NumberOfRounds { get; set; } = 1;
+        
+        public int? SeasonId { get; set; }
+    }
+
+}

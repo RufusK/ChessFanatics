@@ -11,6 +11,9 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : IdentityDbCo
     public DbSet<LeagueParticipation> LeagueParticipations { get; set; }
     public DbSet<Player> Players { get; set; }
     public DbSet<Season> Seasons { get; set; }
+    public DbSet<Tournament> Tournaments { get; set; }
+    public DbSet<TournamentRound> TournamentRounds { get; set; }
+    public DbSet<TournamentParticipation> TournamentParticipations { get; set; }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {

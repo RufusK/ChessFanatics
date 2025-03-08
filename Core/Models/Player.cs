@@ -1,14 +1,16 @@
-using System.ComponentModel.DataAnnotations;
-
 namespace Core.Models;
 
-public class Player(string firstName, string lastName, string email) : BaseEntity
+public class Player : BaseEntity
 {
-    [Required] public string FirstName { get; set; } = firstName;
+    public required string FirstName { get; set; }
 
-    [Required] public string LastName { get; set; } = lastName;
+    public required string LastName { get; set; }
 
-    [Required] public string Email { get; set; } = email;
+    public required string Email { get; set; }
 
     public ICollection<LeagueParticipation> LeagueParticipations { get; } = [];
+
+    public ICollection<SeasonParticipation> SeasonParticipations { get; } = [];
+    
+    public ICollection<TournamentParticipation> TournamentParticipations { get; } = [];
 }

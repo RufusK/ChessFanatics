@@ -1,34 +1,23 @@
 ﻿@inherits LayoutComponentBase
 
-<MudThemeProvider/>
-<MudPopoverProvider/>
-
-<MudDialogProvider/>
-
-<MudSnackbarProvider/>
-
-<MudLayout>
-    <MudAppBar Elevation="0">
-        <MudText Typo="Typo.h5" Class="ml-3">Chess Fanatics</MudText>
-        <MudSpacer/>
+<div>
+    <HxNavbar Color="ThemeColor.Light">
         <AuthorizeView>
             <Authorized>
-                <MudButton @onclick="NavigateToAdmin" Color="Color.Inherit"
-                           Edge="Edge.End">Manage
-                </MudButton>
+                <HxButton @onclick="NavigateToAdmin" Color="ThemeColor.Primary">Manage
+                </HxButton>
             </Authorized>
             <NotAuthorized>
-                <MudIconButton @onclick="NavigateToLogin" Icon="@Icons.Material.Filled.Login" Color="Color.Inherit"
-                               Edge="Edge.End"/>
+                <HxButton @onclick="NavigateToLogin" Color="ThemeColor.Primary">Login</HxButton>
             </NotAuthorized>
         </AuthorizeView>
-    </MudAppBar>
-    <MudMainContent>
-        <MudContainer MaxWidth="MaxWidth.Medium" Class="mt-4">
+    </HxNavbar>
+    <div class="container p-4">
+        <div>
             @Body
-        </MudContainer>
-    </MudMainContent>
-</MudLayout>
+        </div>
+    </div>
+</div>
 
 @code {
 

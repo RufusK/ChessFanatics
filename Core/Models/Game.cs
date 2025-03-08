@@ -2,16 +2,16 @@ namespace Core.Models;
 
 public class Game: BaseEntity
 {
-    public Game(Player white, Player? black = null)
+    public Game(int whitePlayerId, int? blackPlayerId = null)
     {
-        White = white;
-        Black = black;
-        if (black is null)
+        WhitePlayerId = whitePlayerId;
+        BlackPlayerId = blackPlayerId;
+        if (blackPlayerId is null)
         {
             Result = GameResult.Bye;
         }
     }
-    public Player White { get; init; }
-    public Player? Black { get; init; }
+    public int WhitePlayerId { get; init; }
+    public int? BlackPlayerId { get; init; }
     public GameResult? Result { get; set; }
 }

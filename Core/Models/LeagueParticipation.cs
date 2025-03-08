@@ -1,6 +1,6 @@
 namespace Core.Models;
 
-public class LeagueParticipation() : BaseEntity
+public class LeagueParticipation : BaseEntity
 {
     public decimal Elo { get; set; } = 1500;
 

@@ -1,8 +1,8 @@
 using Frontend.Components;
 using Frontend.Services;
 using Frontend.Setup;
+using Havit.Blazor.Components.Web;
 using Infrastructure;
-using MudBlazor.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,7 +14,7 @@ builder.Services.AddRazorComponents()
 
 builder.Services.AddCascadingAuthenticationState();
 
-builder.Services.AddMudServices();
+builder.Services.AddHxServices();
 
 builder.Services.AddInfrastructure(builder.Configuration);
 

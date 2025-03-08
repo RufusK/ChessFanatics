@@ -1,11 +1,14 @@
 using System.Security.Authentication;
 using Core.Models;
+using Infrastructure;
 using Microsoft.AspNetCore.Components.Authorization;
-using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 
 namespace Frontend.Services;
 
-public class UserService(AuthenticationStateProvider authenticationStateProvider, UserManager<User> userManager)
+public class UserService(
+    AuthenticationStateProvider authenticationStateProvider,
+    IDbContextFactory<AppDbContext> dbContextFactory)
 {
     public async Task<User> GetUser()
     {
@@ -16,7 +19,9 @@ public class UserService(AuthenticationStateProvider authenticationStateProvider
             throw new AuthenticationException("No user authenticated");
         }
 
-        var user = await userManager.FindByEmailAsync(authState.User.Identity?.Name!);
+        await using var dbContext = await dbContextFactory.CreateDbContextAsync();
+
+        var user = await dbContext.Users.FirstOrDefaultAsync(x => x.Email == authState.User.Identity.Name!);
         if (user is not null)
         {
             return user;

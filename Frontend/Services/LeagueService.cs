@@ -4,10 +4,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Frontend.Services;
 
-public class LeagueService(UserService userService, AppDbContext dbContext)
+public class LeagueService(UserService userService, IDbContextFactory<AppDbContext> dbContextFactory)
 {
     public async Task<League> GetLeague(string leagueId)
     {
+        await using var dbContext = await dbContextFactory.CreateDbContextAsync();
         var user = await userService.GetUser();
         var league = await dbContext.Leagues
             .Include(x => x.Organizers)

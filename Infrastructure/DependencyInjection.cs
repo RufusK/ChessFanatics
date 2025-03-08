@@ -9,12 +9,12 @@ public static class DependencyInjection
     public static IServiceCollection AddInfrastructure(this IServiceCollection services,
         ConfigurationManager config)
     {
-        services.AddDbContext<AppDbContext>(options =>
+        services.AddDbContextFactory<AppDbContext>(options =>
         {
             var connectionString = config.GetConnectionString("Database");
             options.UseNpgsql(connectionString);
         });
-        
+
         return services;
     }
 }

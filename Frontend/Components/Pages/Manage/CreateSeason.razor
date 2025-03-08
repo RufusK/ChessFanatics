@@ -1,0 +1,36 @@
+@page "/Manage/Leagues/{id}/NewSeason"
+@using System.ComponentModel.DataAnnotations
+
+<EditForm Model="@model" OnValidSubmit="Submit">
+    <DataAnnotationsValidator/>
+    <h3>Create New Season</h3>
+    <HxInputText @bind-Value="@model.Name" Placeholder="Season Name" AutoFocus CssClass="mb-2"/>
+    <HxSubmit Color="ThemeColor.Primary">Save</HxSubmit>
+</EditForm>
+
+@code {
+    [Parameter] public required string Id { get; set; }
+
+    private Model model = new();
+
+    private async Task Submit()
+    {
+        var league = await LeagueService.GetLeague(Id);
+        
+        await using var dbContext = await DbContextFactory.CreateDbContextAsync();
+        dbContext.Seasons.Add(new Season
+        {
+            Name = model.Name,
+            LeagueId = league.Id,
+        });
+        await dbContext.SaveChangesAsync();
+
+        NavigationManager.NavigateTo("/Manage/Leagues/" + Id);
+    }
+
+    public class Model
+    {
+        [Required] [MinLength(1)] public string Name { get; set; }
+    }
+
+}

@@ -1,0 +1,32 @@
+@page "/Manage/Tournaments/{id}"
+<h3 Class="mb-4 text-center">@Tournament?.Name</h3>
+<CascadingValue Value="Id" Name="TournamentId">
+    <HxTabPanel Variant="TabPanelVariant.Card">
+        <HxTab Title="Players">
+            <Content>
+                <TournamentPlayers/>
+            </Content>
+        </HxTab>
+        <HxTab Title="Rounds">
+            <Content>
+            </Content>
+        </HxTab>
+        <HxTab Title="Standings">
+            <Content>
+            </Content>
+        </HxTab>
+    </HxTabPanel>
+</CascadingValue>
+
+@code {
+    [Parameter] public required string Id { get; set; }
+
+    private Tournament? Tournament { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await using var dbContext = await DbContextFactory.CreateDbContextAsync();
+        Tournament = await dbContext.Tournaments.FirstAsync(x => x.LeagueId == int.Parse(Id));
+    }
+
+}   

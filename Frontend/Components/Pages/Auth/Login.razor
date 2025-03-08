@@ -2,57 +2,29 @@
 @attribute [ExcludeFromInteractiveRouting]
 @using System.ComponentModel.DataAnnotations
 @inject NavigationManager NavigationManager
-@inject ISnackbar Snackbar
 
 <PageTitle>Log in</PageTitle>
 
-<MudText Typo="Typo.h3" GutterBottom="true">Log in</MudText>
-
-<MudGrid>
-    <MudItem md="6">
-        <StatusMessage Message="@errorMessage"/>
-        <EditForm Model="Model" method="post" OnValidSubmit="LoginUser" FormName="login">
-            <DataAnnotationsValidator/>
-
-            <MudText GutterBottom="true" Typo="Typo.body1">Use a local account to log in.</MudText>
-
-            <MudGrid>
-                <MudItem md="12">
-                    <MudStaticTextField For="@(() => Model.Email)" @bind-Value="Model.Email"
-                                        Label="Email" Placeholder="name@example.com"
-                                        UserAttributes="@(new() { { "autocomplete", "username" }, { "aria-required", "true" } })"/>
-                </MudItem>
-                <MudItem md="12">
-                    <MudStaticTextField For="@(() => Model.Password)" @bind-Value="Model.Password"
-                                        Label="Password" InputType="InputType.Password" Placeholder="password"
-                                        UserAttributes="@(new() { { "autocomplete", "current-password" }, { "aria-required", "true" } })"/>
-                </MudItem>
-                <MudItem md="12">
-                    <MudStaticButton Variant="Variant.Filled" Color="Color.Primary" FullWidth="true" FormAction="FormAction.Submit">Log in</MudStaticButton>
-                </MudItem>
-            </MudGrid>
-        </EditForm>
-
-    </MudItem>
-</MudGrid>
+<EditForm Model="@model" method="post" OnValidSubmit="LoginUser" FormName="LoginForm">
+    <DataAnnotationsValidator/>
+    <HxInputText @bind-Value="@model.Email"
+           Label="Email" Placeholder="name@example.com"/>
+    <HxInputText @bind-Value="@model.Password"
+           Label="Password" InputType="InputType.Password" Placeholder="password"/>
+    <HxButton type="submit">
+        Log in
+    </HxButton>
+</EditForm>
 
 @code {
-    private string? errorMessage;
-
-    [CascadingParameter] private HttpContext HttpContext { get; set; } = null!;
-
-    [SupplyParameterFromForm] LoginModel Model { get; set; } = new();
+    [SupplyParameterFromForm] LoginModel model { get; set; } = new();
 
     private async Task LoginUser()
     {
-        var result = await SignInManager.PasswordSignInAsync(Model.Email, Model.Password, true, false);
+        var result = await SignInManager.PasswordSignInAsync(model.Email, model.Password, true, false);
         if (result.Succeeded)
         {
             NavigationManager.NavigateTo("/");
-        }
-        else
-        {
-            Snackbar.Add("Invalid login attempt", Severity.Error);
         }
     }
 

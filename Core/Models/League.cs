@@ -9,4 +9,5 @@ public class League : BaseEntity
     public ICollection<LeagueOrganizer> Organizers { get; } = [];
     public ICollection<Season> Seasons { get; } = [];
     public ICollection<LeagueParticipation> LeagueParticipations { get; } = [];
+    public ICollection<Tournament> Tournaments { get; } = [];
 }

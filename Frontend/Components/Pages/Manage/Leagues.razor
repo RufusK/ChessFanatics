@@ -1,23 +1,26 @@
 @page "/Manage/Leagues"
-@using Microsoft.EntityFrameworkCore
-<MudButton OnClick='() => NavigationManager.NavigateTo("Manage/Leagues/New")' Variant="Variant.Filled"
-           Color="Color.Primary">New League
-</MudButton>
+<HxButton OnClick='() => NavigationManager.NavigateTo("Manage/Leagues/New")' Variant="Variant.Filled"
+          Color="ThemeColor.Primary">New League
+</HxButton>
 @if (LeaguesList is not null)
 {
-    <MudList T="League" Class="mt-4">
+    <HxListGroup CssClass="mt-4"> 
         @foreach (var l in LeaguesList)
         {
-            <MudListItem Text="@l.Name" @onclick='() => NavigationManager.NavigateTo("Manage/Leagues/" + l.Id)'/>
+            <HxListGroupItem @onclick='() => NavigationManager.NavigateTo("Manage/Leagues/" + l.Id)'>
+                @l.Name
+            </HxListGroupItem>
         }
-    </MudList>
+    </HxListGroup>
 }
 
 @code {
     private ICollection<League>? LeaguesList { get; set; }
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
-        LeaguesList = DbContext.Leagues.ToListAsync().Result;
+        await using var dbContext = await DbContextFactory.CreateDbContextAsync();
+        LeaguesList = await dbContext.Leagues.ToListAsync();
     }
+
 }
