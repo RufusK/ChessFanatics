@@ -1,6 +1,3 @@
-@page "/Manage/Tournaments/{id}/CreateNextRound"
-<h3 class="mb-4 text-center">Create Round @(Tournament?.CurrentRound + 1)</h3>
-
 @foreach (var (game, index) in Games.Select((game, index) => (game, index)))
 {
     <div class="container mb-2">
@@ -11,7 +8,7 @@
                 <HxAutosuggest
                     TItem="TournamentParticipation"
                     TValue="int?"
-                    @bind-Value="@game.White"
+                    @bind-Value="@game.PlayerWhiteId"
                     DataProvider="ProvideSuggestions"
                     ValueSelector="employee => employee.Id"
                     TextSelector='employee => $"{employee.Player.FirstName} {employee.Player.LastName} ({employee.Player.Email})"'
@@ -21,13 +18,13 @@
                     SearchIcon="null"/>
             </div>
             <div class="d-flex align-items-center justify-content-center" style="width: 115px; flex: 0 0 115px;">
-                <GameResultSelector @bind-Value="@game.GameResult"/>
+                <GameResultSelector @bind-Value="@game.Result"/>
             </div>
             <div class="col-flex">
                 <HxAutosuggest
                     TItem="TournamentParticipation"
                     TValue="int?"
-                    @bind-Value="@game.Black"
+                    @bind-Value="@game.PlayerBlackId"
                     DataProvider="ProvideSuggestions"
                     ValueSelector="employee => employee.Id"
                     TextSelector='employee => $"{employee.Player.FirstName} {employee.Player.LastName} ({employee.Player.Email})"'
@@ -42,58 +39,54 @@
         </div>
     </div>
 }
-<div class="mt-2">
-    <HxButton Color="ThemeColor.Primary" @onclick="() => Games.Add(new UiGame())" CssClass="mb-2">Add Game</HxButton>
-    <HxButton Color="ThemeColor.Primary" @onclick="SaveRound" CssClass="mt-2">Create Round</HxButton>
+<div class="mt-4">
+    <HxButton Color="ThemeColor.Light" @onclick="() => Games.Add(new Game())">Add Game</HxButton>
+    <HxButton Color="ThemeColor.Primary" @onclick="SaveRound">Save</HxButton>
 </div>
 
 @code {
-    [Parameter] public required string Id { get; set; }
+    [Parameter] public required int TournamentId { get; set; }
+    [Parameter] public required int TournamentRoundId { get; set; }
+    [Parameter] public required ICollection<TournamentParticipation> Players { get; set; }
 
-    private Tournament? Tournament { get; set; }
-    private ICollection<TournamentParticipation>? Players { get; set; }
+    private TournamentRound? TournamentRound { get; set; }
+    private ICollection<Game> Games { get; set; } = [];
+    private AppDbContext DbContext;
 
-    private ICollection<TournamentParticipation>? PlayersLeft => Players?
-        .Where(p => Games.All(x => x.Black != p.Id && x.White != p.Id))
+    private ICollection<TournamentParticipation> PlayersLeft => Players
+        .Where(p => Games.All(x => x.PlayerBlackId != p.Id && x.PlayerWhiteId != p.Id))
         .ToList();
-
-    private List<UiGame> Games { get; set; } = [new()];
 
     protected override async Task OnInitializedAsync()
     {
-        await using var dbContext = await DbContextFactory.CreateDbContextAsync();
-        Tournament = await dbContext.Tournaments.FirstAsync(x => x.Id == int.Parse(Id));
-        Players = await dbContext.TournamentParticipations
-            .Include(x => x.Player)
-            .Where(x => x.TournamentId == int.Parse(Id))
-            .ToListAsync();
-    }
-
-    private class UiGame
-    {
-        public int? White { get; set; }
-        public int? Black { get; set; }
-        public GameResult? GameResult { get; set; }
+        DbContext = await DbContextFactory.CreateDbContextAsync();
+        TournamentRound = await DbContext.TournamentRounds.AsTracking()
+            .Include(x => x.Games).AsTracking()
+            .FirstOrDefaultAsync(x => x.Id == TournamentRoundId);
+        if (TournamentRound != null)
+        {
+            Games = TournamentRound.Games;
+        }
     }
 
     private Task<AutosuggestDataProviderResult<TournamentParticipation>> ProvideSuggestions(AutosuggestDataProviderRequest request)
     {
-        var match = PlayersLeft?.Where(x => x.Player.FirstName.Contains(request.UserInput)).ToList();
+        var match = PlayersLeft.Where(x => x.Player.FirstName.Contains(request.UserInput)).ToList();
 
         return Task.FromResult(new AutosuggestDataProviderResult<TournamentParticipation> { Data = match });
     }
 
     private Task<TournamentParticipation?> ResolveAutosuggestItemFromValue(int? value)
     {
-        if (value is null || PlayersLeft is null)
+        if (value is null)
         {
             return Task.FromResult<TournamentParticipation?>(null);
         }
 
-        return Task.FromResult(Players?.FirstOrDefault(x => x.Id == value));
+        return Task.FromResult(Players.FirstOrDefault(x => x.Id == value));
     }
 
-    private void RemoveGame(UiGame game)
+    private void RemoveGame(Game game)
     {
         Games.Remove(game);
         StateHasChanged();
@@ -101,36 +94,25 @@
 
     private async Task SaveRound()
     {
-        await using var dbContext = await DbContextFactory.CreateDbContextAsync();
-        var round = new TournamentRound
-        {
-            Games = ConvertUiGamesToGames(Games).ToList(),
-            TournamentId = int.Parse(Id),
-            RoundNumber = Tournament?.CurrentRound + 1 ?? 1
-        };
-        dbContext.TournamentRounds.Add(round);
-        await dbContext.SaveChangesAsync();
+        Games = CleanupGames(Games).ToList();
+        await DbContext.SaveChangesAsync();
     }
 
-    private IEnumerable<Game> ConvertUiGamesToGames(List<UiGame> games)
+    private IEnumerable<Game> CleanupGames(ICollection<Game> games)
     {
         foreach (var game in games)
         {
-            if (!game.Black.HasValue)
+            if (!game.PlayerWhiteId.HasValue)
             {
-                game.GameResult = GameResult.Bye;
+                continue;
             }
-            
-            if (game.White.HasValue)
+
+            if (!game.PlayerBlackId.HasValue)
             {
-                yield return new Game
-                {
-                    PlayerWhiteId = game.White.Value,
-                    PlayerBlackId = game.Black,
-                    TournamentRoundId = int.Parse(Id),
-                    Result = game.GameResult
-                };
+                game.Result = GameResult.Bye;
             }
+
+            yield return game;
         }
     }
 

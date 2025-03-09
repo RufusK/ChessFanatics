@@ -1,7 +1,8 @@
 <HxAutosuggest
     TItem="TournamentParticipation"
     TValue="int?"
-    @bind-Value="Value"
+    @bind-Value:get="@Value"
+    @bind-Value:set="@ChangeValue"
     DataProvider="ProvideSuggestions"
     ValueSelector="t => t.Id"
     TextSelector='t => $"{t.Player.FirstName} {t.Player.LastName} ({t.Player.Email})"'
@@ -33,4 +34,9 @@
         return Task.FromResult(Players.FirstOrDefault(x => x.Id == value));
     }
 
+    private void ChangeValue(int? val)
+    {
+        Value = val;
+        ValueChanged.InvokeAsync(val);
+    }
 }

@@ -9,7 +9,6 @@
     <HxInputText @bind-Value="@model.Email" CssClass="mb-2" Placeholder="Email" InputMode="InputMode.Email"/>
     <div>
         <HxSubmit Color="ThemeColor.Primary" CssClass="mr-4">Add Player</HxSubmit>
-        <HxButton Color="ThemeColor.Light" @onclick='() => NavigationManager.NavigateTo("/Manage/Tournaments/" + Id)'>Back</HxButton>
     </div>
 </EditForm>
 
@@ -67,7 +66,7 @@
 
         await dbContext.SaveChangesAsync();
 
-        model = new Model();
+        NavigationManager.NavigateTo("/Manage/Tournaments/" + Id);
     }
 
     public class Model

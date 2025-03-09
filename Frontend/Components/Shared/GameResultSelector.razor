@@ -1,20 +1,18 @@
 <HxSelect TItem="UiGameResult"
-          TValue="GameResult?"
+          TValue="GameResult"
           Data="UiGameResults"
           @bind-Value:get="@Value"
           @bind-Value:set="@ChangeValue"
           TextSelector="@(g => g.Label)"
           ValueSelector="@(g => g.Value)"
-          Nullable="true"
-          NullText="-:-"
           SortKeySelector="@(g => g.Value)"
 />
 
 @code {
-    [Parameter] public GameResult? Value { get; set; }
-    [Parameter] public EventCallback<GameResult?> ValueChanged { get; set; }
+    [Parameter] public GameResult Value { get; set; }
+    [Parameter] public EventCallback<GameResult> ValueChanged { get; set; }
 
-    private void ChangeValue(GameResult? gameResult)
+    private void ChangeValue(GameResult gameResult)
     {
         Value = gameResult;
         ValueChanged.InvokeAsync(gameResult);
@@ -24,6 +22,7 @@
 
     private static readonly IEnumerable<UiGameResult> UiGameResults =
     [
+        new("-:-", GameResult.None),
         new("1:0", GameResult.WhiteWin),
         new("0:1", GameResult.BlackWin),
         new("0,5:0,5", GameResult.Draw),

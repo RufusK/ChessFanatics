@@ -1,30 +1,38 @@
-<HxButton Color="ThemeColor.Primary" CssClass="mr-4"
-          @onclick='() => NavigationManager.NavigateTo("/Manage/Tournaments/" + TournamentId + "/CreateNextRound")'>
-    Create Next Round
-</HxButton>
-<HxListGroup CssClass="mt-4">
-    @foreach (var s in rounds)
+<HxTabPanel NavVariant="NavVariant.Pills">
+    @foreach (var round in Rounds)
     {
-        <HxListGroupItem @onclick='() => NavigationManager.NavigateTo("Manage/Leagues/" + s.Id)'>
-            @s.RoundNumber
-        </HxListGroupItem>
+        <HxTab Title="@round.RoundNumber.ToString()">
+            <Content>
+                <div class="mt-4">
+                    <EditTournamentRound TournamentId="round.TournamentId" TournamentRoundId="@round.Id"
+                                         Players="Players"/>
+                </div>
+            </Content>
+        </HxTab>
     }
-</HxListGroup>
+</HxTabPanel>
 
 @code {
-    private ICollection<TournamentRound> rounds { get; set; } = [];
+    private ICollection<TournamentRound> Rounds { get; set; } = [];
+    private List<TournamentParticipation> Players { get; set; } = [];
 
     [CascadingParameter(Name = "TournamentId")]
     protected string TournamentId { get; set; }
 
+
     protected override async Task OnInitializedAsync()
     {
         await using var dbContext = await DbContextFactory.CreateDbContextAsync();
-        rounds = await dbContext.TournamentRounds
+        Rounds = await dbContext.TournamentRounds
             .Include(x => x.Games)
             .Where(x => x.TournamentId == int.Parse(TournamentId))
             .OrderBy(x => x.RoundNumber)
             .ToListAsync();
+        Players = await dbContext.TournamentParticipations
+            .Include(x => x.Player)
+            .Where(x => x.TournamentId == int.Parse(TournamentId))
+            .ToListAsync();
     }
+
 
 }
