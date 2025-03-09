@@ -1,17 +1,15 @@
-<div class="col-flex">
-    <HxAutosuggest
-        TItem="TournamentParticipation"
-        TValue="int?"
-        @bind-Value="Value"
-        DataProvider="ProvideSuggestions"
-        ValueSelector="t => t.Id"
-        TextSelector='t => $"{t.Player.FirstName} {t.Player.LastName} ({t.Player.Email})"'
+<HxAutosuggest
+    TItem="TournamentParticipation"
+    TValue="int?"
+    @bind-Value="Value"
+    DataProvider="ProvideSuggestions"
+    ValueSelector="t => t.Id"
+    TextSelector='t => $"{t.Player.FirstName} {t.Player.LastName} ({t.Player.Email})"'
     MinimumLength="0"
     ItemFromValueResolver="ItemFromValueResolver"
     InputGroupStartText='@(IsWhite ? "White" : null)'
     InputGroupEndText='@(!IsWhite ? "Black" : null)'
     SearchIcon="null"/>
-</div>
 
 @code {
     [Parameter] public int? Value { get; set; }
@@ -34,4 +32,5 @@
 
         return Task.FromResult(Players.FirstOrDefault(x => x.Id == value));
     }
+
 }

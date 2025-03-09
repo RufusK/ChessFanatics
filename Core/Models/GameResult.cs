@@ -2,6 +2,7 @@ namespace Core.Models;
 
 public enum GameResult
 {
+    None,
     WhiteWin,
     BlackWin,
     Draw,
