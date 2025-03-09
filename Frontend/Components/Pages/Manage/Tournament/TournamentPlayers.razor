@@ -1,9 +1,9 @@
 <div class="d-flex justify-content-between">
     <div class="w-500">
-        <AutoSuggestLeagueParticipation @bind-Value="AddPlayerLeagueParticipationId" Players="leagueParticipations"
-                                        PlayersLeft="leagueParticipationsLeft">
+        <AutoSuggestLeaguePlayers @bind-Value="AddPlayerId" Players="players"
+                                        PlayersLeft="playersLeft">
             <HxButton Color="ThemeColor.Light" Outline="true" @onclick="AddToTournament">Add</HxButton>
-        </AutoSuggestLeagueParticipation>
+        </AutoSuggestLeaguePlayers>
     </div>
     <HxButton Color="ThemeColor.Primary" CssClass="mr-4"
               @onclick='() => NavigationManager.NavigateTo("/Manage/Tournaments/" + TournamentId + "/AddPlayer")'>
@@ -11,7 +11,7 @@
     </HxButton>
 </div>
 <HxListGroup CssClass="mt-4">
-    @foreach (var s in players)
+    @foreach (var s in tournamentParticipations)
     {
         <HxListGroupItem>
             @s.Player.FirstName @s.Player.LastName (@s.Player.Email)
@@ -20,14 +20,14 @@
 </HxListGroup>
 
 @code {
-    private ICollection<LeagueParticipation> leagueParticipations = [];
+    private ICollection<Player> players = [];
 
-    private ICollection<LeagueParticipation> leagueParticipationsLeft => leagueParticipations
-        .Where(x => players.All(y => y.PlayerId != x.PlayerId))
+    private ICollection<Player> playersLeft => players
+        .Where(x => tournamentParticipations.All(y => y.PlayerId != x.Id))
         .ToList();
 
-    private ICollection<TournamentParticipation> players { get; set; } = [];
-    private int? AddPlayerLeagueParticipationId { get; set; }
+    private ICollection<TournamentParticipation> tournamentParticipations { get; set; } = [];
+    private int? AddPlayerId { get; set; }
 
     [CascadingParameter(Name = "TournamentId")]
     protected string TournamentId { get; set; }
@@ -35,7 +35,7 @@
     protected override async Task OnInitializedAsync()
     {
         await using var dbContext = await DbContextFactory.CreateDbContextAsync();
-        players = await dbContext.TournamentParticipations
+        tournamentParticipations = await dbContext.TournamentParticipations
             .Include(x => x.Player)
             .AsNoTracking()
             .Where(x => x.TournamentId == int.Parse(TournamentId))
@@ -43,9 +43,8 @@
 
         var tournament = await dbContext.Tournaments.FindAsync(int.Parse(TournamentId));
 
-        leagueParticipations = await dbContext.LeagueParticipations
+        players = await dbContext.Players
             .Where(x => x.LeagueId == tournament!.LeagueId)
-            .Include(x => x.Player)
             .AsNoTracking()
             .ToListAsync();
     }
@@ -53,21 +52,21 @@
     private async Task AddToTournament()
     {
         await using var dbContext = await DbContextFactory.CreateDbContextAsync();
-        if (AddPlayerLeagueParticipationId.HasValue)
+        if (AddPlayerId.HasValue)
         {
-            var lp = await dbContext.LeagueParticipations.FindAsync(AddPlayerLeagueParticipationId);
-            if (lp != null)
+            var player = await dbContext.Players.FindAsync(AddPlayerId);
+            if (player != null)
             {
                 dbContext.TournamentParticipations.Add(new TournamentParticipation
                 {
-                    PlayerId = lp.PlayerId,
+                    PlayerId = player.Id,
                     TournamentId = int.Parse(TournamentId)
                 });
                 await dbContext.SaveChangesAsync();
 
                 await OnInitializedAsync();
 
-                AddPlayerLeagueParticipationId = null;
+                AddPlayerId = null;
             }
         }
     }

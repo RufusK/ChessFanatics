@@ -26,8 +26,7 @@
 
         var existingPlayer = await dbContext.Players
             .Include(x => x.TournamentParticipations)
-            .FirstOrDefaultAsync(x => x.Email == model.Email && x.LeagueParticipations
-                .Any(l => l.LeagueId == tournament!.LeagueId));
+            .FirstOrDefaultAsync(x => x.Email == model.Email && x.LeagueId == tournament!.LeagueId);
 
         if (existingPlayer is null)
         {
@@ -36,13 +35,7 @@
                 FirstName = model.FirstName,
                 LastName = model.LastName,
                 Email = model.Email,
-                LeagueParticipations =
-                {
-                    new LeagueParticipation
-                    {
-                        LeagueId = tournament!.LeagueId
-                    }
-                },
+                LeagueId = tournament!.LeagueId,
                 TournamentParticipations =
                 {
                     new TournamentParticipation

@@ -8,7 +8,6 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : IdentityDbCo
 {
     public DbSet<League> Leagues { get; set; }
     public DbSet<LeagueOrganizer> LeagueOrganizers { get; set; }
-    public DbSet<LeagueParticipation> LeagueParticipations { get; set; }
     public DbSet<Player> Players { get; set; }
     public DbSet<Season> Seasons { get; set; }
     public DbSet<Tournament> Tournaments { get; set; }

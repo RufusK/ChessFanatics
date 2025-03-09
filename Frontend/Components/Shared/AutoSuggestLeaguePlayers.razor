@@ -1,0 +1,50 @@
+<HxAutosuggest
+    TItem="Player"
+    TValue="int?"
+    @bind-Value:get="@Value"
+    @bind-Value:set="@ChangeValue"
+    DataProvider="ProvideSuggestions"
+    ValueSelector="t => t.Id"
+    TextSelector='t => $"{t.FirstName} {t.LastName} ({t.Email})"'
+    MinimumLength="0"
+    ItemFromValueResolver="ItemFromValueResolver"
+    Placeholder="Search Existing Player"
+    SearchIcon="null">
+    <InputGroupEndTemplate>
+        @ChildContent
+    </InputGroupEndTemplate>
+</HxAutosuggest>
+
+@code {
+    [Parameter] public int? Value { get; set; }
+    [Parameter] public EventCallback<int?> ValueChanged { get; set; }
+    [Parameter] public required ICollection<Player> Players { get; set; }
+    [Parameter] public required ICollection<Player> PlayersLeft { get; set; }
+    [Parameter] public RenderFragment? ChildContent { get; set; }
+
+    private Task<AutosuggestDataProviderResult<Player>> ProvideSuggestions(AutosuggestDataProviderRequest request)
+    {
+        var match = PlayersLeft.Where(x =>
+            x.FirstName.Contains(request.UserInput, StringComparison.InvariantCultureIgnoreCase)
+            || x.LastName.Contains(request.UserInput, StringComparison.InvariantCultureIgnoreCase)
+            || x.Email.Contains(request.UserInput, StringComparison.InvariantCultureIgnoreCase)).ToList();
+        return Task.FromResult(new AutosuggestDataProviderResult<Player> { Data = match });
+    }
+
+    private Task<Player?> ItemFromValueResolver(int? value)
+    {
+        if (value is null)
+        {
+            return Task.FromResult<Player?>(null);
+        }
+
+        return Task.FromResult(Players.FirstOrDefault(x => x.Id == value));
+    }
+
+    private void ChangeValue(int? val)
+    {
+        Value = val;
+        ValueChanged.InvokeAsync(val);
+    }
+
+}
