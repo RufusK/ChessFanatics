@@ -20,7 +20,17 @@
                     InputGroupStartText="White"
                     SearchIcon="null"/>
             </div>
-            <div class="d-flex align-items-center justify-content-center" style="width: 30px; flex: 0 0 30px;">-:-</div>
+            <div class="d-flex align-items-center justify-content-center" style="width: 30px; flex: 0 0 30px;">
+                <HxSelect TItem="UiGameResult"
+                          TValue="GameResult?"
+                          Data="UiGameResults"
+                          @bind-Value="@game.GameResult"
+                          TextSelector="@(g => g.Label)"
+                          ValueSelector="@(g => g.Value)"
+                          Nullable="true"
+                          NullText="-:-"
+                />
+            </div>
             <div class="col-flex">
                 <HxAutosuggest
                     TItem="TournamentParticipation"
@@ -45,6 +55,10 @@
     private Tournament? Tournament { get; set; }
     private ICollection<TournamentParticipation>? Players { get; set; }
 
+    private ICollection<TournamentParticipation>? PlayersLeft => Players?
+        .Where(p => Games.All(x => x.Black != p.Id && x.White != p.Id))
+        .ToList();
+
     private List<UiGame> Games { get; set; } = [new()];
 
     protected override async Task OnInitializedAsync()
@@ -61,23 +75,34 @@
     {
         public int? White { get; set; }
         public int? Black { get; set; }
+        public GameResult? GameResult { get; set; }
     }
+
+    private record UiGameResult(string Label, GameResult? Value);
+
+    private static readonly IEnumerable<UiGameResult> UiGameResults =
+    [
+        new("1:0", GameResult.WhiteWin),
+        new("0:1", GameResult.BlackWin),
+        new("0.5:0.5", GameResult.Draw),
+        new("BYE", GameResult.Bye)
+    ];
 
     private Task<AutosuggestDataProviderResult<TournamentParticipation>> ProvideSuggestions(AutosuggestDataProviderRequest request)
     {
-        var match = Players?.Where(x => x.Player.FirstName.Contains(request.UserInput)).ToList();
+        var match = PlayersLeft?.Where(x => x.Player.FirstName.Contains(request.UserInput)).ToList();
 
         return Task.FromResult(new AutosuggestDataProviderResult<TournamentParticipation> { Data = match });
     }
 
     private Task<TournamentParticipation?> ResolveAutosuggestItemFromValue(int? value)
     {
-        if (value is null || Players is null)
+        if (value is null || PlayersLeft is null)
         {
             return Task.FromResult<TournamentParticipation?>(null);
         }
 
-        return Task.FromResult(Players.FirstOrDefault(x => x.Id == value));
+        return Task.FromResult(PlayersLeft.FirstOrDefault(x => x.Id == value));
     }
 
 }
