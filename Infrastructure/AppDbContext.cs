@@ -23,17 +23,5 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : IdentityDbCo
         base.OnModelCreating(builder);
 
         builder.HasDefaultSchema("identity");
-        
-        builder.Entity<Game>()
-            .HasOne(g => g.PlayerWhite)
-            .WithMany(p => p.GamesAsWhite)
-            .HasForeignKey(g => g.PlayerWhiteId)
-            .OnDelete(DeleteBehavior.Restrict);
-
-        builder.Entity<Game>()
-            .HasOne(g => g.PlayerBlack)
-            .WithMany(p => p.GamesAsBlack)
-            .HasForeignKey(g => g.PlayerBlackId)
-            .OnDelete(DeleteBehavior.Restrict);
     }
 }

@@ -22,9 +22,9 @@
     private Task<AutosuggestDataProviderResult<TournamentParticipation>> ProvideSuggestions(AutosuggestDataProviderRequest request)
     {
         var match = PlayersLeft.Where(x =>
-            x.Player.FirstName.Contains(request.UserInput)
-            || x.Player.LastName.Contains(request.UserInput)
-            || x.Player.Email.Contains(request.UserInput)).ToList();
+            x.Player.FirstName.Contains(request.UserInput, StringComparison.InvariantCultureIgnoreCase)
+            || x.Player.LastName.Contains(request.UserInput, StringComparison.InvariantCultureIgnoreCase)
+            || x.Player.Email.Contains(request.UserInput, StringComparison.InvariantCultureIgnoreCase)).ToList();
         return Task.FromResult(new AutosuggestDataProviderResult<TournamentParticipation> { Data = match });
     }
 

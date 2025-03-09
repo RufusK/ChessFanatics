@@ -8,23 +8,26 @@
     TextSelector='t => $"{t.Player.FirstName} {t.Player.LastName} ({t.Player.Email})"'
     MinimumLength="0"
     ItemFromValueResolver="ItemFromValueResolver"
-    InputGroupStartText='@(IsWhite ? "White" : null)'
-    InputGroupEndText='@(!IsWhite ? "Black" : null)'
-    SearchIcon="null"/>
+    Placeholder="Search Existing Player"
+    SearchIcon="null">
+    <InputGroupEndTemplate>
+        @ChildContent
+    </InputGroupEndTemplate>
+</HxAutosuggest>
 
 @code {
     [Parameter] public int? Value { get; set; }
     [Parameter] public EventCallback<int?> ValueChanged { get; set; }
     [Parameter] public required ICollection<LeagueParticipation> Players { get; set; }
     [Parameter] public required ICollection<LeagueParticipation> PlayersLeft { get; set; }
-    [Parameter] public bool IsWhite { get; set; } = true;
+    [Parameter] public RenderFragment? ChildContent { get; set; }
 
     private Task<AutosuggestDataProviderResult<LeagueParticipation>> ProvideSuggestions(AutosuggestDataProviderRequest request)
     {
         var match = PlayersLeft.Where(x =>
-            x.Player.FirstName.Contains(request.UserInput)
-            || x.Player.LastName.Contains(request.UserInput)
-            || x.Player.Email.Contains(request.UserInput)).ToList();
+            x.Player.FirstName.Contains(request.UserInput, StringComparison.InvariantCultureIgnoreCase)
+            || x.Player.LastName.Contains(request.UserInput, StringComparison.InvariantCultureIgnoreCase)
+            || x.Player.Email.Contains(request.UserInput, StringComparison.InvariantCultureIgnoreCase)).ToList();
         return Task.FromResult(new AutosuggestDataProviderResult<LeagueParticipation> { Data = match });
     }
 
