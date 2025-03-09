@@ -45,11 +45,23 @@
             LeagueId = league.Id,
             NumberOfRounds = model.NumberOfRounds,
             IsEloRated = model.IsEloRated,
-            SeasonId = model.SeasonId
+            SeasonId = model.SeasonId,
+            Rounds = CreateRounds(5).ToList()
         });
         await dbContext.SaveChangesAsync();
 
         NavigationManager.NavigateTo("/Manage/Leagues/" + Id);
+    }
+
+    private static IEnumerable<TournamentRound> CreateRounds(int numberOfRounds)
+    {
+        for (var i = 0; i <= numberOfRounds; i++)
+        {
+            yield return new TournamentRound
+            {
+                RoundNumber = i + 1
+            };
+        }
     }
 
     public class Model

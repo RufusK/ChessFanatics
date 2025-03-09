@@ -19,9 +19,9 @@ public class Tournament : BaseEntity
 
     public PairingSystem PairingSystem { get; set; } = PairingSystem.Manual;
 
-    public ICollection<TournamentRound> Rounds { get; } = [];
+    public ICollection<TournamentRound> Rounds { get; set; } = [];
 
-    public ICollection<TournamentParticipation> TournamentParticipations { get; } = [];
+    public ICollection<TournamentParticipation> TournamentParticipations { get; set; } = [];
 
     // public void CalculateNextRound()
     // {
