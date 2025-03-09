@@ -5,33 +5,15 @@
             <div class="d-flex align-items-center justify-content-center"
                  style="width: 30px; flex: 0 0 30px;">@(index + 1)</div>
             <div class="col-flex">
-                <HxAutosuggest
-                    TItem="TournamentParticipation"
-                    TValue="int?"
-                    @bind-Value="@game.PlayerWhiteId"
-                    DataProvider="ProvideSuggestions"
-                    ValueSelector="employee => employee.Id"
-                    TextSelector='employee => $"{employee.Player.FirstName} {employee.Player.LastName} ({employee.Player.Email})"'
-                    MinimumLength="0"
-                    ItemFromValueResolver="ResolveAutosuggestItemFromValue"
-                    InputGroupStartText="White"
-                    SearchIcon="null"/>
+                <AutoSuggestTournamentParticipation @bind-Value="@game.PlayerWhiteId" IsWhite="true"
+                                                    Players="@Players" PlayersLeft="@PlayersLeft"/>
             </div>
-            <div class="d-flex align-items-center justify-content-center" style="width: 115px; flex: 0 0 115px;">
+            <div class="d-flex align-items-center justify-content-center" style="width: 140px; flex: 0 0 140px;">
                 <GameResultSelector @bind-Value="@game.Result"/>
             </div>
             <div class="col-flex">
-                <HxAutosuggest
-                    TItem="TournamentParticipation"
-                    TValue="int?"
-                    @bind-Value="@game.PlayerBlackId"
-                    DataProvider="ProvideSuggestions"
-                    ValueSelector="employee => employee.Id"
-                    TextSelector='employee => $"{employee.Player.FirstName} {employee.Player.LastName} ({employee.Player.Email})"'
-                    MinimumLength="0"
-                    ItemFromValueResolver="ResolveAutosuggestItemFromValue"
-                    InputGroupEndText="Black"
-                    SearchIcon="null"/>
+                <AutoSuggestTournamentParticipation @bind-Value="@game.PlayerBlackId" IsWhite="false"
+                                                    Players="@Players" PlayersLeft="@PlayersLeft"/>
             </div>
             <div class="d-flex align-items-center justify-content-center" style="width: 50px; flex: 0 0 50px;">
                 <HxButton Icon="BootstrapIcon.Trash" Color="ThemeColor.Light" @onclick="() => RemoveGame(game)"/>
@@ -67,23 +49,6 @@
         {
             Games = TournamentRound.Games;
         }
-    }
-
-    private Task<AutosuggestDataProviderResult<TournamentParticipation>> ProvideSuggestions(AutosuggestDataProviderRequest request)
-    {
-        var match = PlayersLeft.Where(x => x.Player.FirstName.Contains(request.UserInput)).ToList();
-
-        return Task.FromResult(new AutosuggestDataProviderResult<TournamentParticipation> { Data = match });
-    }
-
-    private Task<TournamentParticipation?> ResolveAutosuggestItemFromValue(int? value)
-    {
-        if (value is null)
-        {
-            return Task.FromResult<TournamentParticipation?>(null);
-        }
-
-        return Task.FromResult(Players.FirstOrDefault(x => x.Id == value));
     }
 
     private void RemoveGame(Game game)

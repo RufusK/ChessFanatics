@@ -6,6 +6,7 @@
           TextSelector="@(g => g.Label)"
           ValueSelector="@(g => g.Value)"
           SortKeySelector="@(g => g.Value)"
+          Nullable="false"
 />
 
 @code {
@@ -25,7 +26,7 @@
         new("-:-", GameResult.None),
         new("1:0", GameResult.WhiteWin),
         new("0:1", GameResult.BlackWin),
-        new("0,5:0,5", GameResult.Draw),
+        new("DRAW", GameResult.Draw),
         new("BYE", GameResult.Bye)
     ];
 }

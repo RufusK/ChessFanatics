@@ -1,5 +1,5 @@
 <HxAutosuggest
-    TItem="TournamentParticipation"
+    TItem="LeagueParticipation"
     TValue="int?"
     @bind-Value:get="@Value"
     @bind-Value:set="@ChangeValue"
@@ -15,24 +15,24 @@
 @code {
     [Parameter] public int? Value { get; set; }
     [Parameter] public EventCallback<int?> ValueChanged { get; set; }
-    [Parameter] public required ICollection<TournamentParticipation> Players { get; set; }
-    [Parameter] public required ICollection<TournamentParticipation> PlayersLeft { get; set; }
+    [Parameter] public required ICollection<LeagueParticipation> Players { get; set; }
+    [Parameter] public required ICollection<LeagueParticipation> PlayersLeft { get; set; }
     [Parameter] public bool IsWhite { get; set; } = true;
 
-    private Task<AutosuggestDataProviderResult<TournamentParticipation>> ProvideSuggestions(AutosuggestDataProviderRequest request)
+    private Task<AutosuggestDataProviderResult<LeagueParticipation>> ProvideSuggestions(AutosuggestDataProviderRequest request)
     {
         var match = PlayersLeft.Where(x =>
             x.Player.FirstName.Contains(request.UserInput)
             || x.Player.LastName.Contains(request.UserInput)
             || x.Player.Email.Contains(request.UserInput)).ToList();
-        return Task.FromResult(new AutosuggestDataProviderResult<TournamentParticipation> { Data = match });
+        return Task.FromResult(new AutosuggestDataProviderResult<LeagueParticipation> { Data = match });
     }
 
-    private Task<TournamentParticipation?> ItemFromValueResolver(int? value)
+    private Task<LeagueParticipation?> ItemFromValueResolver(int? value)
     {
         if (value is null)
         {
-            return Task.FromResult<TournamentParticipation?>(null);
+            return Task.FromResult<LeagueParticipation?>(null);
         }
 
         return Task.FromResult(Players.FirstOrDefault(x => x.Id == value));
